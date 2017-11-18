@@ -15,4 +15,4 @@ Provided that the /refresh endpoint is invoked, waiting for 10 minutes to reflec
 
 1. Fix 1 - Setting the property `eureka.server.peer-eureka-nodes-update-interval-ms` to a lower value could solve the problem, however that will introduce unnecessary network traffic in the system since the service-url list is rarely updated. 
 
-3. Fix 2 - I would suggest to call  `PeerEurekaNodes.updatePeerEurekaNodes()` upon `EnvironmentChangeEvent` as a better solution. PR submitted [here] (https://github.com/spring-cloud/spring-cloud-netflix/pull/2455).
+3. Fix 2 - I would suggest to call  `PeerEurekaNodes.updatePeerEurekaNodes()` upon `EnvironmentChangeEvent` as a better solution. PR submitted [here](https://github.com/spring-cloud/spring-cloud-netflix/pull/2455).

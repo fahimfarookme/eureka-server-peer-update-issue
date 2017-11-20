@@ -2,7 +2,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://hello:12344444/eureka/
-      zone1: http://zone1:9999999999999999999999/eureka/
+      zone1: http://fahim:99/eureka/
       zone2: http://zone2:88/eureka/
     availabilityZones:
       region2: zone1,zone2

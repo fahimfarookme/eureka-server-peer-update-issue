@@ -3,7 +3,7 @@
 CONFIG_REPO_URI=https://github.com/fahimfarookme/eureka-server-peer-update-issue
 CONFIG_REPO_PATH=config-repo
 CONFIG_SERVER_PORT=11001
-DEBUG="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=6005,suspend=n"
+DEBUG="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=y"
 
 function wait_till_started {
 	until [ "`curl --silent --show-error --connect-timeout 1 http://localhost:$1/health | grep 'UP'`" != "" ];
@@ -15,8 +15,8 @@ function wait_till_started {
 
 host=0
 function update_in_config_repo {
-	echo "eureka.client.service-url.defaultZone=http://host-${host}:888${host}/eureka" > config-repo/application.properties
-	git add config-repo/application.properties
+	echo "eureka.client.service-url.defaultZone=http://host-${host}:888${host}/eureka" > ../config-repo/application.properties
+	git add ../config-repo/application.properties
 	git status
 	git commit -m "Auto commit"
 	git push origin master
@@ -24,7 +24,9 @@ function update_in_config_repo {
 }
 
 printf "\n\nPackaging...\n\n"
-mvn clean package
+cd eureka-server
+mvn -Dmaven.repo.local=$HOME/.spring/repo clean package
+cd ..
 
 printf "\n\nStarting the config-server...\n\n"
 java -Dport=$CONFIG_SERVER_PORT -Dconfig.repo.uri=$CONFIG_REPO_URI -Dconfig.repo.path=$CONFIG_REPO_PATH -jar config-server/target/config-server-0.0.1-SNAPSHOT.jar &

@@ -13,10 +13,18 @@ function wait_till_started {
 	done
 }
 
-host=0
 function update_in_config_repo {
-	echo "eureka.client.service-url.defaultZone=http://host-${host}:888${host}/eureka" > config-repo/application.properties
-	git add config-repo/application.properties
+
+	if [[ -e .host ]] 
+	then host=`cat .host`
+	else host=-1
+	fi
+	
+	((host++))
+	echo $host > .host
+	
+	echo "eureka.client.service-url.defaultZone=http://host-${host}:888${host}/eureka" > ../config-repo/application.properties
+	git add ../config-repo/application.properties
 	git status
 	git commit -m "Auto commit"
 	git push origin master
@@ -35,7 +43,7 @@ java $DEBUG -Dconfig.server.uri=http://localhost:$CONFIG_SERVER_PORT -Dport=1400
 wait_till_started   14001
 
 printf "\n\nBefore updating the service-urls in config-repo...\n\n"
-curl -s http://localhost:14001/
+curl -s http://localhost:14001/ | grep http
 
 printf "\n\nUpdating the service-urls in config-repo...\n\n"
 update_in_config_repo
@@ -44,5 +52,5 @@ printf "\n\nInvoking /refresh endpoint of Eureka Server...\n\n"
 curl -X POST http://localhost:14001/refresh
 
 printf "\n\nChecking whether the new date is reflected in Eureka Server...\n\n"
-curl -s http://localhost:14001/
+curl -s http://localhost:14001/ | grep http
 
